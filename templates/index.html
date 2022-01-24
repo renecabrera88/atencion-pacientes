@@ -1,0 +1,15 @@
+<!--se exporta el archivo layout.html, donde incrustraras este archivo-->
+{% extends 'layout.html' %}
+
+<!--todo lo que viene se incrusta en layout.html-->
+{% block body %}
+<!-- este bloque lo que hace es similar a handlebars, se puede inyectar codigo en el <html></html> con
+    el motor de plantilla jinja2
+en este caso, si recivimos un mensaje flask, entonces recorre el arreglo por cada mensaje y 
+lo imprime en un parrafo  -->
+
+
+<!-- este formulario tiene metodo por donde extrae data de los 
+input, y alk aporetar el boiton submit que al apretar ejecuta la ruta post add_contact -->
+
+{% endblock %}
