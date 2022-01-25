@@ -1,0 +1,43 @@
+<!--se exporta el archivo layout.html, donde incrustraras este archivo-->
+{% extends 'layout.html' %}
+
+<!--todo lo que viene se incrusta en layout.html-->
+{% block body %}
+
+
+<form action="/add_atencion_db" method="POST">
+    <div class="form-group mt-1">
+        <input type="text" name='idPaciente' placeholder="nombre" class="form-control">
+    </div>
+    <div class="form-group mt-1">
+        <input type="text" name='idConsulta' placeholder="direccion" class="form-control">
+    </div>
+    <div class="form-group mt-1">
+        <input type="text" name='observacion' placeholder="rut" class="form-control">
+    </div>
+    <div class="form-group mt-1">
+        <input type="date" name='estatura' placeholder="fechaNacimiento" class="form-control">
+    </div>
+    <div class="form-group mt-1">
+        <input type="date" name='peso' placeholder="fechaNacimiento" class="form-control">
+    </div>
+    <div class="form-group mt-1">
+        <input type="date" name='tieneDieta' placeholder="fechaNacimiento" class="form-control">
+    </div>
+    <div class="form-group mt-1">
+        <input type="date" name='fumador' placeholder="fechaNacimiento" class="form-control">
+    </div>
+    <div class="form-group mt-1">
+        <input type="date" name='fumador' placeholder="fechaNacimiento" class="form-control">
+    </div>
+    
+    <div class="form-group mt-1">
+        <button type="submit" class="btn btn-primary btn-block">
+            Save
+        </button>
+    </div>
+                    
+    
+</form>
+
+{% endblock %}
