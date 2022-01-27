@@ -3,6 +3,7 @@
 from flask import Flask, flash, render_template, request, redirect, url_for
 from flask_mysqldb import MySQL
 from calculos.calculo import suma
+from middleware.consulta import consultaPaciente
 
 app = Flask ( __name__ )
 #MySQL coneccion
@@ -43,6 +44,9 @@ def add_consulta():
 def add_paciente():
     return render_template('add-paciente.html')
 
+@app.route('/add_atencion')
+def add_atencion():
+    return render_template('add-atencion.html')
 
 @app.route('/add_persona_db', methods=['POST'])
 def add_persona_db():
@@ -128,18 +132,14 @@ def add_paciente_db():
     if request.method == 'POST':
         #Asigna valores a variables extraido de los input del form html
         idPersona = request.form['idPersona']
-        tieneDieta = request.form['tieneDieta']
-        peso = request.form['peso']
-        altura = request.form['altura']
-        esFumador = request.form['esFumador']
         idHospital = request.form['idHospital']
         #prueba llamando funciones
-        prioridad = (suma(peso,altura))
+        prioridad = (suma(10, 5))
         print(prioridad)
         #crea una coneccion y la envia a una variable cur (cursor)
         cur = mysql.connection.cursor()
         #escribe lña consulta sql
-        cur.execute('INSERT INTO paciente (id_persona, tiene_dieta, fumador, id_hospital) VALUES (%s, %s, %s, %s)',(idPersona, tieneDieta, esFumador, idHospital))
+        cur.execute('INSERT INTO paciente (id_persona, id_hospital) VALUES (%s, %s)',(idPersona, idHospital))
         #INSERT INTO `paciente`(`id`, `id_persona`, `tiene_dieta`, `rel_peso_altura`, `fumador`, `estado`, `id_hospital`) VALUES ('[value-1]','[value-2]','[value-3]','[value-4]','[value-5]','[value-6]','[value-7]')
         #ejecuta la coinsulta sql
         mysql.connection.commit()
@@ -148,6 +148,36 @@ def add_paciente_db():
         #despues de ejecutar la coinsulta sql, redirecciona la web a index
         return redirect(url_for('Index'))
 
+
+
+@app.route('/add_atencion_db', methods=['POST'])
+def add_atencion_db():
+    if request.method == 'POST':
+        #Asigna valores a variables extraido de los input del form html
+        idPaciente = request.form['idPaciente']
+        idConsulta = request.form['idConsulta']
+        observacion = request.form['observacion']
+        estatura = request.form['estatura']
+        peso = request.form['peso']
+        tieneDieta = request.form['tieneDieta']
+        fumador = request.form['fumador']
+        aniosFumador = request.form['aniosfumador']
+        dataPaciente = consultaPaciente(int(idPaciente), idConsulta,estatura, peso, fumador,aniosFumador,tieneDieta, mysql)
+        #prueba llamando funciones
+        #prioridad = (suma(peso,altura))
+        print(dataPaciente)
+        #crea una coneccion y la envia a una variable cur (cursor)
+        ##cur = mysql.connection.cursor()
+        #escribe lña consulta sql
+        ##cur.execute('INSERT INTO paciente (id_paciente, id_consulta, observacion, estatura, peso, tiene_dieta, fumador,) VALUES (%s, %s, %s, %s, %s, %s, %s)',
+        ##(idPaciente, idConsulta, observacion, estatura, peso, tieneDieta, fumador))
+        #INSERT INTO `paciente`(`id`, `id_persona`, `tiene_dieta`, `rel_peso_altura`, `fumador`, `estado`, `id_hospital`) VALUES ('[value-1]','[value-2]','[value-3]','[value-4]','[value-5]','[value-6]','[value-7]')
+        #ejecuta la coinsulta sql
+        ##mysql.connection.commit()
+        #Manda un mensaque flask desde al servidor al frontend, de exito de la transaccion
+        ##flash('El paciente fue agregada fue agregada con exito')
+        #despues de ejecutar la coinsulta sql, redirecciona la web a index
+        return redirect(url_for('Index'))
 
 
 #si el archjivo que arranca es app.py, arranca el server
