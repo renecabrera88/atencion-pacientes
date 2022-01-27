@@ -3,7 +3,7 @@
 from flask import Flask, flash, render_template, request, redirect, url_for
 from flask_mysqldb import MySQL
 from calculos.calculo import suma
-from middleware.consulta import consultaPaciente
+from middleware.consulta import consultaPaciente, salaEspera
 
 app = Flask ( __name__ )
 #MySQL coneccion
@@ -162,10 +162,13 @@ def add_atencion_db():
         tieneDieta = request.form['tieneDieta']
         fumador = request.form['fumador']
         aniosFumador = request.form['aniosfumador']
-        dataPaciente = consultaPaciente(int(idPaciente), idConsulta,estatura, peso, fumador,aniosFumador,tieneDieta, mysql)
+        dataPaciente = consultaPaciente(int(idPaciente), idConsulta,estatura, peso, fumador, aniosFumador, tieneDieta, observacion, mysql)
+        print('en app :', dataPaciente)
+        listaAtencion = salaEspera(dataPaciente, mysql)
+        print('lista :', listaAtencion)
         #prueba llamando funciones
         #prioridad = (suma(peso,altura))
-        print(dataPaciente)
+        
         #crea una coneccion y la envia a una variable cur (cursor)
         ##cur = mysql.connection.cursor()
         #escribe lña consulta sql
