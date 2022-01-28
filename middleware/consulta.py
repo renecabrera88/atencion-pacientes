@@ -104,10 +104,77 @@ def consultaPaciente(idPaciente, idConsulta,estatura, peso, fumador,aniosfumador
     return (dataCompletaPaciente)
 
 
+def llenarConsulta(enEspera, mysql):
+    #extraigo cupo de atenciones y cuanto disponibles
+    idatencion = enEspera[0]
+    idPaciente = enEspera[1]
+    idConsulta = enEspera[2]
+    prioridad = enEspera[5]
+    #consulta por la cantidad de numeros de atencion entregado basado en los tickes
+    cur = mysql.connection.cursor()
+    cur.execute('SELECT * FROM consulta WHERE id = (%s)', [idConsulta])
+    atencionConsulta  = cur.fetchall()
+    tuplaConsulta = atencionConsulta[0]
+    pacientes = tuplaConsulta[1]
+    ticket = tuplaConsulta[7]
+    numerosAtencion = (pacientes - ticket) + 1
+    ticket = ticket - 1
+    print('Datas', idatencion, idPaciente, idConsulta, prioridad, pacientes, ticket, numerosAtencion)
+    if ticket >= 0:
+        #Limpio las tablas sala_atencion y sala_espera
+
+        #actualiza nuevo valor ticket
+        cur = mysql.connection.cursor()
+        cur.execute("""
+           UPDATE consulta
+           SET ticket = %s
+           WHERE id = %s
+           """ ,(ticket, idConsulta))
+        mysql.connection.commit()
+        #estos corresponde a las primeras prioridades y se van a lista para esperar atencion
+        cur = mysql.connection.cursor()
+        cur.execute('INSERT INTO sala_atencion (id_atencion, id_consulta, id_paciente, prioridad) VALUES (%s, %s, %s, %s)',(idatencion, idConsulta, idPaciente, prioridad))
+        mysql.connection.commit()
+    else:
+        #esta tabla llena a los que no son prioridad
+        cur = mysql.connection.cursor()
+        cur.execute('INSERT INTO sala_espera (id_atencion, prioridad, id_consulta, id_paciente) VALUES (%s, %s, %s, %s)',(idatencion, prioridad, idConsulta, idPaciente, ))
+        mysql.connection.commit()
+
+    return
+
+#def resetTicket(mysql):
+
+ #   cur = mysql.connection.cursor()
+ #   cur.execute('SELECT * FROM atencion WHERE estado = (%s) ORDER BY prioridad DESC', ['activo'])
+ #   dataAtencionActivos  = cur.fetchall()
 
 def salaEspera(dataPaciente, mysql):
-    print(dataPaciente)
-    return (dataPaciente)
+    #reinicio las tablas borrandolas
+    cur = mysql.connection.cursor()
+    cur.execute('DELETE FROM sala_atencion;')
+    mysql.connection.commit()
+    cur = mysql.connection.cursor()
+    cur.execute('DELETE FROM sala_espera;')
+    mysql.connection.commit()
+    #la idea es consulta por y resetear los ticket
+    resetTicket(mysql)
+    cur = mysql.connection.cursor()
+    cur.execute('SELECT * FROM atencion WHERE estado = (%s) ORDER BY prioridad DESC', ['activo'])
+    dataAtencionActivos  = cur.fetchall()
+    #Extraigo info sobre de los pacientes activos para crear sala de espera
+    cur = mysql.connection.cursor()
+    cur.execute('SELECT * FROM atencion WHERE estado = (%s) ORDER BY prioridad DESC', ['activo'])
+    dataAtencionActivos  = cur.fetchall()
+    #extraigo id de la persona
+    #dataPaciente = (data[0])
+    for enEspera in dataAtencionActivos:
+        llenarConsulta(enEspera, mysql)
+        
+        
+        
+    #print('Sala de espera: ',dataAtencionActivos)
+    return (dataAtencionActivos)
 
     ##hacer: creaer 2 tablas, una que me guarde una lista con todos los id de paciente listo a ser atendidos
     # de acuerdo a la capacidad de pacientes de la consulta ,y 

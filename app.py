@@ -165,7 +165,8 @@ def add_atencion_db():
         dataPaciente = consultaPaciente(int(idPaciente), idConsulta,estatura, peso, fumador, aniosFumador, tieneDieta, observacion, mysql)
         print('en app :', dataPaciente)
         listaAtencion = salaEspera(dataPaciente, mysql)
-        print('lista :', listaAtencion)
+        #print('lista :', listaAtencion)
+
         #prueba llamando funciones
         #prioridad = (suma(peso,altura))
         
