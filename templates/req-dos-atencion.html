@@ -1,0 +1,75 @@
+<!--se exporta el archivo layout.html, donde incrustraras este archivo-->
+{% extends 'layout.html' %}
+
+<!--todo lo que viene se incrusta en layout.html-->
+{% block body %}
+<!-- este bloque lo que hace es similar a handlebars, se puede inyectar codigo en el <html></html> con
+    el motor de plantilla jinja2
+en este caso, si recivimos un mensaje flask, entonces recorre el arreglo por cada mensaje y 
+lo imprime en un parrafo  -->
+
+
+<div class="row">
+    <div class="col-md-5">
+
+
+
+
+        <div class="card card-body mt-5">
+
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            {% for message in messages %}
+    
+                <!--Codigo bootstrap, muestra los mensajes flash-->
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+
+
+
+            <form action="/req_dos_update" method="POST">
+
+                <div class="form-group"> <!-- Full Name -->
+                    <label for="RUN" class="control-label">RUN</label>
+                    <input disabled type="text" class="form-control" id="full_name_id" name="full_name" placeholder={{ pacientes.4 }}>
+                </div>    
+            
+                <div class="form-group"> <!-- Street 1 -->
+                    <label for="Nombre" class="control-label">Nombre</label>
+                    <input disabled type="text" class="form-control" id="street1_id" name="street1" placeholder={{ pacientes.5 }}>
+                </div>                    
+                                        
+                <div class="form-group"> <!-- Street 2 -->
+                    <label for="street2_id" class="control-label">Dirección</label>
+                    <input disabled type="text" class="form-control" id="street2_id" name="street2" placeholder= {{ pacientes.6 }} >
+                </div>    
+            
+                <div class="form-group"> <!-- City-->
+                    <label for="Diagnostico" class="control-label">Diagnóstico</label>
+                    <input type="text" class="form-control" name="diagnostico" placeholder="Ingrese el diagnóstico de la atención aquí">
+                </div>      
+                
+                <input id="prodId" name="id_atencion" type="hidden" value={{ pacientes.1 }}>
+                                
+                <div class="form-group mt-1">
+                    <button type="submit" class="btn btn-primary btn-block">
+                        Save
+                    </button>
+                </div>    
+                
+            </form>
+        </div>
+    </div>
+
+</div>
+
+<!-- este formulario tiene metodo por donde extrae data de los 
+input, y alk aporetar el boiton submit que al apretar ejecuta la ruta post add_contact -->
+
+{% endblock %}

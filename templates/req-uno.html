@@ -75,9 +75,9 @@ lo imprime en un parrafo  -->
                         <td>{{ paciente.3 }}</td>
                         <td>{{ paciente.4 }}</td>
                         <td>
-                            <a href="/edit/{{paciente.0}}" class="btn btn-outline-success">Edit</a>
                             <!-- la linea a continuacion mantiene escondigo el id de la tupla extraida, no se muestra-->
-                            <a href="/delete/{{paciente.0}}" class="btn btn-outline-danger btn-delete">Delete</a>
+                            <a href="/req_uno_seleccionar/{{paciente.1}}" class="btn btn-outline-success">Seleccionar</a>
+                                                        
                         </td>
                     </tr>
                 {% endfor %}

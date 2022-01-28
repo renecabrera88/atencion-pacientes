@@ -4,7 +4,7 @@ from flask import Flask, flash, render_template, request, redirect, url_for
 from flask_mysqldb import MySQL
 from calculos.calculo import suma
 from middleware.consulta import consultaPaciente, salaEspera
-from middleware.consultaIndex import get_pacientes
+from middleware.consultaIndex import get_pacientes, get_data_filtrada, get_sala_atencion, get_sala, update_estado_consulta
 
 app = Flask ( __name__ )
 #MySQL coneccion
@@ -15,7 +15,7 @@ app.config['MYSQL_DB'] = 'fonasa'
 mysql = MySQL(app)
 
 #setting
-#Ni idea para lo que es, pero es como un token
+# es como un token
 app.secret_key = 'mysecretkey'
 
 #@pp se llama decorador, si entra a la ruta raiz,
@@ -24,7 +24,8 @@ app.secret_key = 'mysecretkey'
 @app.route('/')
 def Index():
     data = get_pacientes(mysql)
-    return render_template('index.html', contacts = data)
+    print('esta es la data de index :', data)
+    return render_template('index.html', pacientes = data)
 
 @app.route('/add_persona')
 def add_persona():
@@ -49,6 +50,33 @@ def add_paciente():
 @app.route('/add_atencion')
 def add_atencion():
     return render_template('add-atencion.html')
+
+@app.route('/req_uno')
+def req_uno():
+    data = get_pacientes(mysql)
+    print('esta es la data de index :', data)
+    return render_template('req-uno.html', pacientes = data)
+
+@app.route('/req_uno_seleccionar/<prioridad>')
+def req_uno_filtro(prioridad):
+    data = get_data_filtrada(mysql, prioridad)
+    return render_template('index.html', pacientes = data)
+
+@app.route('/req_dos')
+def req_dos():
+    data = get_sala(mysql)
+    print('esta es la data de index :', data)
+    return render_template('req-dos.html', pacientes = data)
+
+@app.route('/req_dos_atencion/<id_sala>')
+def req_dos_atencion(id_sala):
+    data = get_sala_atencion(mysql, id_sala)
+    print('Data requerimiento 2 :', data[0])
+    return render_template('req-dos-atencion.html', pacientes = data[0])
+
+
+
+
 
 @app.route('/add_persona_db', methods=['POST'])
 def add_persona_db():
@@ -185,6 +213,28 @@ def add_atencion_db():
         #despues de ejecutar la coinsulta sql, redirecciona la web a index
         return redirect(url_for('Index'))
 
+@app.route('/req_dos_update', methods=['POST'])
+def req_dos_update():
+    if request.method == 'POST':
+        #Asigna valores a variables extraido de los input del form html
+        diagnostico = request.form['diagnostico']
+        id_atencion = request.form['id_atencion']
+
+        update_estado_consulta(mysql, diagnostico, id_atencion)
+
+        print('Corresponde al id del diagnostico : ', id_atencion)
+        print('Corresponde al diagnostico : ', diagnostico)
+        #crea una coneccion y la envia a una variable cur (cursos)
+        ##cur = mysql.connection.cursor()
+        #escribe lña consulta sql
+        ##cur.execute('INSERT INTO personas (rut, nombre, direccion, fechaNacimiento) VALUES (%s, %s, %s, %s)',(rut, nombre, direccion, fechaNacimiento))
+        #ejecuta la coinsulta sql
+        ##mysql.connection.commit()
+        #Manda un mensaque flask desde al servidor al frontend, de exito de la transaccion
+        ##flash('Constact added successfully')
+        #despues de ejecutar la coinsulta sql, redirecciona la web a index
+        ##return redirect(url_for('Index'))
+        return redirect(url_for('Index'))
 
 #si el archjivo que arranca es app.py, arranca el server
 if __name__ == '__main__':
