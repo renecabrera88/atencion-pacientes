@@ -18,15 +18,28 @@ def consultaPaciente(idPaciente, idConsulta,estatura, peso, fumador,aniosfumador
     #extraigo fecha de la tupla
     dataFecha = dataPersona[0]
     fechaNacimiento = dataFecha[5]
-    
+
+
     #consulto dato de la consulta
-    ##cur = mysql.connection.cursor()
-    ##cur.execute('SELECT * FROM consulta WHERE id = (%s)', [idConsulta])
-    ##dataTupla = cur.fetchall()
-    ##dataConsulta = dataTupla[0]
+    cur = mysql.connection.cursor()
+    cur.execute('SELECT * FROM consulta WHERE id = (%s)', [idConsulta])
+    dataTupla = cur.fetchall()
+    dataConsulta = dataTupla[0]
+    ticket = dataConsulta[1]
     ##numero_atencion = (dataConsulta[1]-dataConsulta[7]) + 1
     
-    ##print('Datos de la consulta: ', dataConsulta[0] )
+    #Reseteo de ticket, llevando al nunmero de cupo
+    cur = mysql.connection.cursor()
+    cur.execute("""
+       UPDATE consulta
+       SET ticket = %s
+       WHERE id = %s
+       """ ,(ticket, idConsulta))
+    mysql.connection.commit()
+    
+
+
+    print('Esto son los Datos de la Tupla de la consulta :', ticket )
     ##print('numero de atencion :', numero_atencion)
 
 
@@ -158,7 +171,7 @@ def salaEspera(dataPaciente, mysql):
     cur.execute('DELETE FROM sala_espera;')
     mysql.connection.commit()
     #la idea es consulta por y resetear los ticket
-    resetTicket(mysql)
+    #resetTicket(mysql)
     cur = mysql.connection.cursor()
     cur.execute('SELECT * FROM atencion WHERE estado = (%s) ORDER BY prioridad DESC', ['activo'])
     dataAtencionActivos  = cur.fetchall()

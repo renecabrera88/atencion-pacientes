@@ -4,6 +4,7 @@ from flask import Flask, flash, render_template, request, redirect, url_for
 from flask_mysqldb import MySQL
 from calculos.calculo import suma
 from middleware.consulta import consultaPaciente, salaEspera
+from middleware.consultaIndex import get_pacientes
 
 app = Flask ( __name__ )
 #MySQL coneccion
@@ -22,7 +23,8 @@ app.secret_key = 'mysecretkey'
 # necesario indicar el la ruta por que sabe que esta en template 
 @app.route('/')
 def Index():
-    return render_template('index.html')
+    data = get_pacientes(mysql)
+    return render_template('index.html', contacts = data)
 
 @app.route('/add_persona')
 def add_persona():
