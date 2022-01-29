@@ -12,32 +12,11 @@ lo imprime en un parrafo  -->
 <div class="row">
     <div class="col-md-5">
 
-
-
-
-        <div class="card card-body mt-5">
-
-            {% with messages = get_flashed_messages() %}
-            {% if messages %}
-            {% for message in messages %}
-    
-                <!--Codigo bootstrap, muestra los mensajes flash-->
-                <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            
-            {% endfor %}
-            {% endif %}
-            {% endwith %}
-
-           
-        </div>
     </div>
 
     <div class="col-md-7 mt-5">
         <table class="table table-striped table-bordered bg-white table-sm">
-
+            <b><p>Listar Pacientes Fumadores Urgentes</p></b>
             <thead>
                 <tr>
                     <td>Prioridad</td>
