@@ -2,7 +2,6 @@
 #from crypt import methods
 from flask import Flask, flash, render_template, request, redirect, url_for
 from flask_mysqldb import MySQL
-from calculos.calculo import suma
 from middleware.consulta import consultaPaciente, salaEspera
 from middleware.consultaIndex import get_pacientes, get_data_filtrada, get_sala_atencion, get_sala, update_estado_consulta,update_liberar_atenciones, get_sala_liberar, get_fumadores, get_mas_atendidos, get_mas_edad
 
@@ -196,7 +195,6 @@ def add_paciente_db():
         idPersona = request.form['idPersona']
         idHospital = request.form['idHospital']
         #prueba llamando funciones
-        prioridad = (suma(10, 5))
         #print(prioridad)
         #crea una coneccion y la envia a una variable cur (cursor)
         cur = mysql.connection.cursor()
