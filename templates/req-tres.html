@@ -1,0 +1,51 @@
+<!--se exporta el archivo layout.html, donde incrustraras este archivo-->
+{% extends 'layout.html' %}
+
+<!--todo lo que viene se incrusta en layout.html-->
+{% block body %}
+<!-- este bloque lo que hace es similar a handlebars, se puede inyectar codigo en el <html></html> con
+    el motor de plantilla jinja2
+en este caso, si recivimos un mensaje flask, entonces recorre el arreglo por cada mensaje y 
+lo imprime en un parrafo  -->
+
+
+<div class="row">
+    
+    <div class="col-md-7 mt-5">
+        <table class="table table-striped table-bordered bg-white table-sm">
+
+            <thead>
+                <tr>
+                    <td>Prioridad</td>
+                    <td>RUN</td>
+                    <td>Nombre</td>
+                    <td>Direccion</td>    
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for paciente in pacientes%}
+                    <tr>
+                        <td>{{ paciente.1 }}</td>
+                        <td>{{ paciente.2 }}</td>
+                        <td>{{ paciente.3 }}</td>
+                        <td>{{ paciente.4 }}</td>
+                        
+                    </tr>
+                {% endfor %}
+                
+            </tbody>
+        
+            <a href="/req_tres_liberar" class="btn btn-outline-danger">Liberar Pacientes</a>
+                <!-- la linea a continuacion mantiene escondigo el id de la tupla extraida, no se muestra-->
+                
+
+        </table>
+    </div>
+
+</div>
+
+<!-- este formulario tiene metodo por donde extrae data de los 
+input, y alk aporetar el boiton submit que al apretar ejecuta la ruta post add_contact -->
+
+{% endblock %}

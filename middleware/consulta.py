@@ -39,7 +39,7 @@ def consultaPaciente(idPaciente, idConsulta,estatura, peso, fumador,aniosfumador
     
 
 
-    print('Esto son los Datos de la Tupla de la consulta :', ticket )
+    #print('Esto son los Datos de la Tupla de la consulta :', ticket )
     ##print('numero de atencion :', numero_atencion)
 
 
@@ -48,26 +48,26 @@ def consultaPaciente(idPaciente, idConsulta,estatura, peso, fumador,aniosfumador
     #proceso que saca la edad
     today = datetime.now()
     edad = int(today.year - fechaNacimiento.year - ((today.month,today.day) < (fechaNacimiento.month, fechaNacimiento.day)))
-    print("La edad es : ", edad)
+    #print("La edad es : ", edad)
 
     #Prioridad
     if (1 <= edad <= 16):
         if (1 <= edad <= 5):
             prioridad = (int(peso) / int(estatura) ) + 3
-            print("rango 1")
+            #print("rango 1")
         elif (6 <= edad <= 12):
             prioridad = (int(peso) / int(estatura) ) + 2
-            print("rango 2")
+            #print("rango 2")
         elif (13 <= edad <= 15):
             prioridad = (int(peso) / int(estatura) ) + 1
-            print("rango 3")
+            #print("rango 3")
     elif (16 <= edad <= 59):
         if (fumador == "si"):
             prioridad = int(aniosfumador)/4 + 2
         else:
             prioridad = 2
 
-        print ("rango joven")
+        #print ("rango joven")
         
     elif (60 <= edad <= 100):
         if tieneDieta == "si":
@@ -75,8 +75,8 @@ def consultaPaciente(idPaciente, idConsulta,estatura, peso, fumador,aniosfumador
         else:
             prioridad = (int(edad) /30) + 3
 
-    print("rango 3ra edad")
-    print ("Paciente con prioridad : ", prioridad)
+    #print("rango 3ra edad")
+    #print ("Paciente con prioridad : ", prioridad)
 
 
 
@@ -85,17 +85,17 @@ def consultaPaciente(idPaciente, idConsulta,estatura, peso, fumador,aniosfumador
     elif (60 <= edad <= 100):
         prioridadGeneral = ((prioridad * edad)/ 100) + 5.3
 
-    print("prioridad general : ", prioridadGeneral)
+    #print("prioridad general : ", prioridadGeneral)
     #age = (edad)
     #print (tuple(age))
     dataCompleta = dataPaciente + dataPersona[0]
     lista = list(dataCompleta)
-    print('Esta es una lista sin edad :', lista)
+    #print('Esta es una lista sin edad :', lista)
     lista.append(edad)
-    print('Esta es una lista con edad :', lista)
+    #print('Esta es una lista con edad :', lista)
      
     dataCompletaPaciente = tuple(lista)
-    print('data completa paciente :', dataCompletaPaciente )
+    #print('data completa paciente :', dataCompletaPaciente )
 
     
     cur = mysql.connection.cursor()
@@ -107,13 +107,13 @@ def consultaPaciente(idPaciente, idConsulta,estatura, peso, fumador,aniosfumador
     #Manda un mensaque flask desde al servidor al frontend, de exito de la transaccion
     flash('El paciente fue agregada fue agregada con exito')
 
-    print ("hello world")
+    #print ("hello world")
     #print(dataCompleta[9])
     #ahora = datetime.strftime()
     #edad = datetime.now - dataCompleta[9]
     #print(edad) 
 
-    print(dataCompleta)
+    #print(dataCompleta)
     return (dataCompletaPaciente)
 
 
@@ -132,7 +132,7 @@ def llenarConsulta(enEspera, mysql):
     ticket = tuplaConsulta[7]
     numerosAtencion = (pacientes - ticket) + 1
     ticket = ticket - 1
-    print('Datas', idatencion, idPaciente, idConsulta, prioridad, pacientes, ticket, numerosAtencion)
+    #print('Datas', idatencion, idPaciente, idConsulta, prioridad, pacientes, ticket, numerosAtencion)
     if ticket >= 0:
         #Limpio las tablas sala_atencion y sala_espera
 
@@ -176,9 +176,9 @@ def salaEspera(dataPaciente, mysql):
     cur.execute('SELECT * FROM atencion WHERE estado = (%s) ORDER BY prioridad DESC', ['activo'])
     dataAtencionActivos  = cur.fetchall()
     #Extraigo info sobre de los pacientes activos para crear sala de espera
-    cur = mysql.connection.cursor()
-    cur.execute('SELECT * FROM atencion WHERE estado = (%s) ORDER BY prioridad DESC', ['activo'])
-    dataAtencionActivos  = cur.fetchall()
+    #cur = mysql.connection.cursor()
+    #cur.execute('SELECT * FROM atencion WHERE estado = (%s) ORDER BY prioridad DESC', ['activo'])
+    #dataAtencionActivos  = cur.fetchall()
     #extraigo id de la persona
     #dataPaciente = (data[0])
     for enEspera in dataAtencionActivos:
@@ -189,7 +189,7 @@ def salaEspera(dataPaciente, mysql):
     #print('Sala de espera: ',dataAtencionActivos)
     return (dataAtencionActivos)
 
-    ##hacer: creaer 2 tablas, una que me guarde una lista con todos los id de paciente listo a ser atendidos
+    ##lo ultimo: creaer 2 tablas, una que me guarde una lista con todos los id de paciente listo a ser atendidos
     # de acuerdo a la capacidad de pacientes de la consulta ,y 
     #otra con los pacientes que estan en la sala de espera y proximo a ser pasado a la lista,  
     # aqui construyo las lista de acuerdo a la edad del paciente.

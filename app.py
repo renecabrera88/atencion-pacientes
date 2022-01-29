@@ -4,7 +4,7 @@ from flask import Flask, flash, render_template, request, redirect, url_for
 from flask_mysqldb import MySQL
 from calculos.calculo import suma
 from middleware.consulta import consultaPaciente, salaEspera
-from middleware.consultaIndex import get_pacientes, get_data_filtrada, get_sala_atencion, get_sala, update_estado_consulta
+from middleware.consultaIndex import get_pacientes, get_data_filtrada, get_sala_atencion, get_sala, update_estado_consulta,update_liberar_atenciones, get_sala_liberar, get_fumadores, get_mas_atendidos, get_mas_edad
 
 app = Flask ( __name__ )
 #MySQL coneccion
@@ -24,7 +24,7 @@ app.secret_key = 'mysecretkey'
 @app.route('/')
 def Index():
     data = get_pacientes(mysql)
-    print('esta es la data de index :', data)
+    #print('esta es la data de index :', data)
     return render_template('index.html', pacientes = data)
 
 @app.route('/add_persona')
@@ -54,7 +54,7 @@ def add_atencion():
 @app.route('/req_uno')
 def req_uno():
     data = get_pacientes(mysql)
-    print('esta es la data de index :', data)
+    #print('esta es la data de index :', data)
     return render_template('req-uno.html', pacientes = data)
 
 @app.route('/req_uno_seleccionar/<prioridad>')
@@ -65,18 +65,50 @@ def req_uno_filtro(prioridad):
 @app.route('/req_dos')
 def req_dos():
     data = get_sala(mysql)
-    print('esta es la data de index :', data)
+    #print('esta es la data de index :', data)
     return render_template('req-dos.html', pacientes = data)
 
 @app.route('/req_dos_atencion/<id_sala>')
 def req_dos_atencion(id_sala):
     data = get_sala_atencion(mysql, id_sala)
-    print('Data requerimiento 2 :', data[0])
+    #print('Data requerimiento 2 :', data[0])
     return render_template('req-dos-atencion.html', pacientes = data[0])
 
 
+@app.route('/req_tres')
+def req_tres():
+    data = get_sala(mysql)
+    #print('esta es la data de index :', data)
+    return render_template('req-tres.html', pacientes = data)
+    #data = update_liberar_atenciones(mysql)
+    #print('esta es la data de liberara :', data)
+    #return render_template('req-dos.html', pacientes = data)
 
+@app.route('/req_tres_liberar')
+def req_tres_liberar():
+    data = get_sala_liberar(mysql)
+    update_liberar_atenciones(mysql, data)
+    salaEspera(data, mysql)
+    return render_template('index.html', pacientes = data)
 
+@app.route('/req_cuatro')
+def req_cuatro():
+    data = get_fumadores(mysql)
+    #print('esta es la data de los fumadores :', data)
+    return render_template('req-cuatro.html', pacientes = data)
+ 
+@app.route('/req_cinco')
+def req_cinco():
+    data = get_mas_atendidos(mysql)
+    #print('esta es la data das consultas con mas atenciones :', data)
+    return render_template('req-cinco.html', pacientes = data)
+
+ 
+@app.route('/req_seis')
+def req_seis():
+    data = get_mas_edad(mysql)
+    #print('esta es la data das consultas con mas atenciones :', data)
+    return render_template('req-seis.html', pacientes = data)
 
 @app.route('/add_persona_db', methods=['POST'])
 def add_persona_db():
@@ -86,7 +118,7 @@ def add_persona_db():
         direccion = request.form['direccion']
         rut = request.form['rut']
         fechaNacimiento = request.form['fechaNacimiento']
-        print(fechaNacimiento)
+        #print(fechaNacimiento)
         #crea una coneccion y la envia a una variable cur (cursos)
         cur = mysql.connection.cursor()
         #escribe lña consulta sql
@@ -165,7 +197,7 @@ def add_paciente_db():
         idHospital = request.form['idHospital']
         #prueba llamando funciones
         prioridad = (suma(10, 5))
-        print(prioridad)
+        #print(prioridad)
         #crea una coneccion y la envia a una variable cur (cursor)
         cur = mysql.connection.cursor()
         #escribe lña consulta sql
@@ -193,24 +225,13 @@ def add_atencion_db():
         fumador = request.form['fumador']
         aniosFumador = request.form['aniosfumador']
         dataPaciente = consultaPaciente(int(idPaciente), idConsulta,estatura, peso, fumador, aniosFumador, tieneDieta, observacion, mysql)
-        print('en app :', dataPaciente)
+        #print('en app :', dataPaciente)
         listaAtencion = salaEspera(dataPaciente, mysql)
         #print('lista :', listaAtencion)
 
         #prueba llamando funciones
         #prioridad = (suma(peso,altura))
         
-        #crea una coneccion y la envia a una variable cur (cursor)
-        ##cur = mysql.connection.cursor()
-        #escribe lña consulta sql
-        ##cur.execute('INSERT INTO paciente (id_paciente, id_consulta, observacion, estatura, peso, tiene_dieta, fumador,) VALUES (%s, %s, %s, %s, %s, %s, %s)',
-        ##(idPaciente, idConsulta, observacion, estatura, peso, tieneDieta, fumador))
-        #INSERT INTO `paciente`(`id`, `id_persona`, `tiene_dieta`, `rel_peso_altura`, `fumador`, `estado`, `id_hospital`) VALUES ('[value-1]','[value-2]','[value-3]','[value-4]','[value-5]','[value-6]','[value-7]')
-        #ejecuta la coinsulta sql
-        ##mysql.connection.commit()
-        #Manda un mensaque flask desde al servidor al frontend, de exito de la transaccion
-        ##flash('El paciente fue agregada fue agregada con exito')
-        #despues de ejecutar la coinsulta sql, redirecciona la web a index
         return redirect(url_for('Index'))
 
 @app.route('/req_dos_update', methods=['POST'])
@@ -222,18 +243,9 @@ def req_dos_update():
 
         update_estado_consulta(mysql, diagnostico, id_atencion)
 
-        print('Corresponde al id del diagnostico : ', id_atencion)
-        print('Corresponde al diagnostico : ', diagnostico)
-        #crea una coneccion y la envia a una variable cur (cursos)
-        ##cur = mysql.connection.cursor()
-        #escribe lña consulta sql
-        ##cur.execute('INSERT INTO personas (rut, nombre, direccion, fechaNacimiento) VALUES (%s, %s, %s, %s)',(rut, nombre, direccion, fechaNacimiento))
-        #ejecuta la coinsulta sql
-        ##mysql.connection.commit()
-        #Manda un mensaque flask desde al servidor al frontend, de exito de la transaccion
-        ##flash('Constact added successfully')
-        #despues de ejecutar la coinsulta sql, redirecciona la web a index
-        ##return redirect(url_for('Index'))
+        #print('Corresponde al id del diagnostico : ', id_atencion)
+        #print('Corresponde al diagnostico : ', diagnostico)
+       
         return redirect(url_for('Index'))
 
 #si el archjivo que arranca es app.py, arranca el server
